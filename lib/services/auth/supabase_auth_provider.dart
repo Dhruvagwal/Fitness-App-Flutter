@@ -132,10 +132,10 @@ class SupabaseAuthProvider implements AuthProvider {
   @override
   Future<AuthUser> signInWithGoogle() async {
     const webClientId =
-        '51632356470-1hiep725n3281koa7bk9ue3bec3ipkps.apps.googleusercontent.com';
+        '51632356470-j3nbk8bcm038n1b3a5r7ce2gn1sq5gpb.apps.googleusercontent.com';
 
     const iosClientId =
-        '51632356470-tct7rnooc05sk14ekeac5gd3b9auchep.apps.googleusercontent.com';
+        '51632356470-p73114rkh50ofh8tkn0ojf2t739m0sco.apps.googleusercontent.com';
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
       clientId: iosClientId,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xrun/shared/colors.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomAuthTextField extends StatefulWidget {
   final String label;
   final TextEditingController controller;
   final Function(String)? onChanged;
@@ -15,7 +15,7 @@ class CustomTextField extends StatefulWidget {
   final bool? isVisible;
   final VoidCallback? onVisibilityToggle;
 
-  const CustomTextField({
+  const CustomAuthTextField({
     super.key,
     required this.label,
     this.onChanged,
@@ -32,10 +32,10 @@ class CustomTextField extends StatefulWidget {
   });
 
   @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
+  State<CustomAuthTextField> createState() => _CustomAuthTextFieldState();
 }
 
-class _CustomTextFieldState extends State<CustomTextField> {
+class _CustomAuthTextFieldState extends State<CustomAuthTextField> {
   bool _isPasswordVisible = false;
 
   @override

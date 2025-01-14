@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:xrun/shared/colors.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomAuthButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final double? width;
   final double? height;
-  const CustomButton({
+  const CustomAuthButton({
     super.key,
     required this.text,
     required this.onPressed,

@@ -19,6 +19,7 @@ import 'package:xrun/bloc/states/auth_state_needs_verification.dart';
 import 'package:xrun/bloc/states/auth_state_registering.dart';
 import 'package:xrun/bloc/states/auth_state_uninitialized.dart';
 import 'package:xrun/bloc/states/auth_state_update_password.dart';
+import 'package:xrun/services/auth/auth_exceptions.dart';
 import 'package:xrun/services/auth/auth_provider.dart';
 import 'package:xrun/services/auth/supabase_auth_provider.dart';
 
@@ -110,7 +111,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           exception: e,
           message: StateMessage(
             e.toString(),
-            isError: true,
+            isError: false,
           ),
         ));
       }
@@ -211,7 +212,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           exception: e,
           message: StateMessage(
             e.toString(),
-            isError: true,
+            isError: false,
           ),
         ));
       }
@@ -231,14 +232,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (email == null) {
         return;
       }
-      emit(const AuthStateForgotPassword(
-        hasSentEmail: false,
-        exception: null,
-        message: StateMessage(
-          'Please provide your registered email to receive a password reset link',
-          isError: true,
+      emit(
+        const AuthStateForgotPassword(
+          hasSentEmail: false,
+          exception: null,
+          message: StateMessage(
+            'Please provide your registered email to receive a password reset link',
+            isError: false,
+          ),
         ),
-      ));
+      );
       bool didSendEmail;
       Exception? exception;
 
@@ -246,14 +249,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await authProvider.sendPasswordResetEmail(toEmail: email);
         didSendEmail = true;
         exception = null;
-        // emit(AuthStateUpdatePassword(
-        //   message: StateMessage(
-        //     'A password reset link has been sent to $email',
-        //     isError: false,
-        //   ),
-        //   hasUpdatedPassword: false,
-        //   exception: exception,
-        // ));
+        emit(AuthStateForgotPassword(
+          message: StateMessage(
+            'A password reset link has been sent to $email',
+            isError: false,
+          ),
+          hasSentEmail: didSendEmail,
+          exception: null,
+        ));
+      } on UserNotFoundAuthException catch (_) {
+        didSendEmail = false;
+        exception = UserNotFoundAuthException();
+        emit(AuthStateForgotPassword(
+          message: StateMessage(
+            'User not found',
+            isError: true,
+          ),
+          hasSentEmail: didSendEmail,
+          exception: exception,
+        ));
       } on Exception catch (e) {
         didSendEmail = false;
         exception = e;
