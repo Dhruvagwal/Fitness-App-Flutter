@@ -14,6 +14,7 @@ import 'package:xrun/shared/buttons/custom_auth_button.dart';
 import 'package:xrun/shared/show_snackbar.dart';
 import 'package:xrun/shared/text_fields/custom_auth_text_field.dart';
 import 'package:xrun/utils/constant.dart';
+import 'package:xrun/utils/shared_preferrence_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _loadSaveCredentials();
     super.initState();
   }
 
@@ -41,6 +43,34 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadSaveCredentials() async {
+    final savedEmail = await SharedPreferrenceHelper.getString('email');
+    final savedPassword = await SharedPreferrenceHelper.getString('password');
+    final savedRememberMe =
+        await SharedPreferrenceHelper.getBool('remember_me') ?? false;
+
+    if (savedRememberMe) {
+      setState(() {
+        _emailController.text = savedEmail ?? '';
+        _passwordController.text = savedPassword ?? '';
+        rememberMe = savedRememberMe;
+      });
+    }
+  }
+
+  Future<void> _saveCredentials() async {
+    if (rememberMe) {
+      await SharedPreferrenceHelper.setString('email', _emailController.text);
+      await SharedPreferrenceHelper.setString(
+          'password', _passwordController.text);
+      await SharedPreferrenceHelper.setBool('remember_me', rememberMe);
+    } else {
+      await SharedPreferrenceHelper.remove('email');
+      await SharedPreferrenceHelper.remove('password');
+      await SharedPreferrenceHelper.remove('remember_me');
+    }
   }
 
   Widget _buildSocialButton(String assetPath, VoidCallback onTap) {
@@ -72,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
+          await _saveCredentials();
           if (state.exception is UserNotFoundAuthException) {
             await showSnackbar(
               context,

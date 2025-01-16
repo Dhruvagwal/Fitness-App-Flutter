@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -27,10 +28,12 @@ import 'package:xrun/shared/loading_dialogs/loading_dialog.dart';
 import 'package:xrun/shared/loading_dialogs/loading_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
   await Supabase.initialize(
-    url: 'https://gqhdiedtlvgjzwgarznd.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxaGRpZWR0bHZnanp3Z2Fyem5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4MzExNjcsImV4cCI6MjA1MjQwNzE2N30.hp1a-xsVssGXdnc3VvrKLGKTES4OLkze2_Z9awjrweY',
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   runApp(const MyApp());
 }
